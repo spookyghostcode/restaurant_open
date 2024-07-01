@@ -7,6 +7,9 @@ from . import util
 ROLLOVER_TIME = 4
 
 def restaurant_list(request):
+    if request.GET.get("datetime") is None:
+        return JsonResponse({"error":"No param found: Please include the 'datetime' parameter with your request"}, status=400)
+    
     try:
         datetime_obj = datetime.strptime(request.GET.get("datetime"), "%b %d %Y %I:%M%p")
     except ValueError:
@@ -49,7 +52,7 @@ def restaurant_list(request):
             try:
                 start_time = datetime.strptime(start_time, "%I %p")
             except ValueError:
-                raise Exception("Invalid time format")
+                return JsonResponse({"error":"Unable to parse restaurant hours"}, status=500)
             
         try:
             end_time = datetime.strptime(end_time, "%I:%M %p")
@@ -57,7 +60,8 @@ def restaurant_list(request):
             try:
                 end_time = datetime.strptime(end_time, "%I %p")
             except ValueError:
-                raise Exception("Invalid time format")
+                return JsonResponse({"error":"Unable to parse restaurant hours"}, status=500)
+
             
         start_time = datetime_obj.replace(hour=start_time.hour, minute=start_time.minute)
         end_time = datetime_obj.replace(hour=end_time.hour, minute=end_time.minute)
@@ -74,4 +78,5 @@ def restaurant_list(request):
         if hours != "closed" and start_time <= datetime_obj and end_time >= datetime_obj:
             open_restaurants.append(rest.name)
 
-    return JsonResponse({"data": open_restaurants})
+    # Return the list even if its empty
+    return JsonResponse({"Open Restaurants": open_restaurants})

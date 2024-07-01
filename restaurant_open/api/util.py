@@ -15,9 +15,11 @@ def fetch_hours(date, rest):
         case 6:
             return rest.sunday
         case _:
-            raise Exception("Invalid date: Number must be between 0-6")
+            raise ValueError("Invalid date: Number must be between 0-6")
         
 def decrement_weekday(date):
+        if date < 0 or date > 6:
+            raise ValueError("Invalid date: Number must be between 0-6")
         date -= 1
         if date < 0:
             date = 6
