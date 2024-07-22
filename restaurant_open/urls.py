@@ -20,5 +20,5 @@ from restaurant_open.api.views import restaurant_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('restaurant_list/', restaurant_list)
+    path('restaurant_list/', restaurant_list, name='get-restaurants')
 ]
